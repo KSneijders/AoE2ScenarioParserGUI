@@ -20,10 +20,12 @@
 <h1>Hello World!</h1>
 <button onclick="doRequest()">Do Request</button>
 <form>
-    <label for="trigger-name">Name:</label><br/>
+    <label for="trigger-name">Value:</label><br/>
     <input type="text" id="trigger-name" name="name"><br/>
     <label for="trigger-id">ID: </label><br/>
     <input type="text" id="trigger-id" name="id"><br/>
+    <label for="field-name">Field: </label><br/>
+    <input type="text" value="name" id="field-name" name="field"><br/>
 
     <button type="submit" id="new-trigger">Add</button>
     <button type="submit" id="edit-trigger">Edit</button>
@@ -33,6 +35,9 @@
     <tr>
         <th>ID</th>
         <th>Name</th>
+        <th>Enabled</th>
+        <th>Looping</th>
+        <th>Description</th>
     </tr>
     </thead>
     <tbody>
@@ -43,13 +48,13 @@
 <script>
     $(document).on('click', '#edit-trigger', function (e) {
         e.preventDefault()
+        let data = {}
+        data[$('#field-name').val()] = $('#trigger-name').val()
 
         $.ajax({
             type: "PUT",
             url: "http://localhost:5000/triggers/" +  $('#trigger-id').val(),
-            data: {
-                name: $('#trigger-name').val()
-            },
+            data: data,
             dataType: "json"
         }).done(function () {
             doRequest()
@@ -82,7 +87,11 @@
 
             for (let trigger of triggers) {
                 let tr = $('<tr></tr>')
-                tr.html(`<td>${trigger['id']}</td><td>${trigger['name']}</td>`)
+                let result = ""
+                for (let key of ['id', 'name','enabled', 'looping', 'description']) {
+                    result += `<td>${trigger[key]}</td>`
+                }
+                tr.html(result)
                 tbody.append(tr)
             }
         });
