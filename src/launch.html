@@ -5,7 +5,7 @@
     <title>Waiting...</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
     <link rel="stylesheet" href="style.css" type="text/css">
-    <script src="./libs/jquery-3.6.0.min.js"></script>
+    <script src="js/libs/jquery-3.6.0.min.js"></script>
 </head>
 <body style="background: white;">
 <h1>Checking if AoE2ScenarioParser is installed...</h1>
@@ -23,9 +23,7 @@
             report.append(result['message'])
         } else {
             report.append(n2br(result['message'] + "\n\nRedirecting..."))
-            setTimeout(() => {
-                windowControls.redirect('index.html')
-            }, 1500)
+            windowControls.redirect('index.html')
         }
     })
 </script>
