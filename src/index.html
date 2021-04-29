@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
+    <script src="./libs/jquery-3.6.0.min.js"></script>
+</head>
+<body style="background: white;">
+<h1>Hello World!</h1>
+<button onclick="doRequest()">Do Request</button>
+<div id="trigger-overview">
+
+</div>
+</body>
+<script>
+    function doRequest() {
+        $.ajax({
+            url: 'http://localhost:5000/triggers',
+            dataType: "json"
+        }).done(function (data) {
+            $('#trigger-overview').text(JSON.stringify(data))
+        });
+    }
+</script>
+</html>

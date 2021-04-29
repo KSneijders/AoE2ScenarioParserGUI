@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Waiting...</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <script src="./libs/jquery-3.6.0.min.js"></script>
+</head>
+<body style="background: white;">
+<h1>Checking if AoE2ScenarioParser is installed...</h1>
+<div id="log-report" style="font-weight: bold"></div>
+</body>
+<script type="module">
+    import { n2br } from './js/string-modifiers.js';
+
+    pyControls.parserInstalled().then(function(data) {
+        let result = JSON.parse(data)
+        let report = $('#log-report')
+
+        if (result['code'] === -1) {
+            report.append(n2br('Error in python script\n\n'))
+            report.append(result['message'])
+        } else {
+            report.append(n2br(result['message'] + "\n\nRedirecting..."))
+            setTimeout(() => {
+                windowControls.redirect('index.html')
+            }, 1500)
+        }
+    })
+</script>
+</html>
