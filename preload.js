@@ -9,5 +9,5 @@ contextBridge.exposeInMainWorld('windowControls', {
 })
 
 contextBridge.exposeInMainWorld('pyControls', {
-    parserInstalled: () => ipcRenderer.invoke('pyControls:parserInstalled')
+    parserInstalled: () =>  ipcRenderer.invoke('pyControls:parserInstalled')
 })

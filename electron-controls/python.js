@@ -4,7 +4,7 @@ const path = require('path')
 
 ipcMain.handle('pyControls:parserInstalled', async (event) => {
     let installParser = spawn('python', [
-        path.join(__dirname, '../python-scripts/install-parser.py'),
+        path.join(__dirname, './../src/python-scripts/install-parser.py'),
     ])
 
     return new Promise(function (resolve, reject) {
@@ -13,4 +13,3 @@ ipcMain.handle('pyControls:parserInstalled', async (event) => {
         });
     })
 })
-
