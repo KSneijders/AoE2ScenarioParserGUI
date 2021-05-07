@@ -1,56 +1,53 @@
 {
   "name": "aoe2scenarioparser-gui",
   "version": "0.0.1",
+  "description": "Electron Vue3 Typescript Quick Start",
   "author": "KSneijders",
+  "private": true,
+  "main": "electron/main.js",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "start": "electron ./electron/main.js",
+    "build:dev": "vue-cli-service build",
+    "build:dev:watch": "vue-cli-service build --watch",
+    "build:prod": "vue-cli-service build --modern --production",
+    "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "start": "vue-cli-service build && electron ."
+    "dist": "npm run build:prod && electron-builder",
+    "dist:mac": "npm run build:prod && electron-builder --mac",
+    "dist:linux": "npm run build:prod && electron-builder --linux",
+    "dist:windows": "npm run build:prod && electron-builder --windows",
+    "dist:all": "npm run build:prod && electron-builder --mac --linux --windows"
   },
-  "main": "main.js",
   "dependencies": {
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
-    "vue": "^3.0.0-beta.1",
+    "dotenv": "^8.2.0",
+    "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
-    "vue-resource": "^1.5.2"
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.18.0",
-    "@typescript-eslint/parser": "^4.18.0",
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^5.2.4",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
+    "@vue/cli-plugin-unit-mocha": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.0-beta.1",
-    "@vue/eslint-config-typescript": "^7.0.0",
-    "babel-eslint": "^10.1.0",
-    "electron": "^12.0.5",
+    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/eslint-config-typescript": "^5.0.2",
+    "@vue/test-utils": "^2.0.0-0",
+    "chai": "^4.1.2",
+    "electron": "^11.0.3",
+    "electron-builder": "^22.9.1",
+    "electron-reloader": "^1.1.0",
     "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0-alpha.0",
-    "typescript": "~4.1.5",
-    "vue-cli-plugin-vue-next": "~0.1.4"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended",
-      "@vue/typescript"
-    ],
-    "parserOptions": {
-      "parser": "@typescript-eslint/parser"
-    },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ],
-  "keywords": [],
-  "license": "ISC"
+    "eslint-plugin-vue": "^7.0.0-0",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "typescript": "~3.9.3"
+  }
 }

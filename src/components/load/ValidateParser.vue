@@ -3,7 +3,7 @@
         <h1>Checking if AoE2ScenarioParser is installed...</h1>
         <div id="log-report" style="font-weight: bold">
             <p
-                v-for="line in log_lines"
+                v-for="line in logLines"
                 v-bind:key="line"
                 v-html="line"
             ></p>
@@ -11,31 +11,32 @@
     </div>
 </template>
 
-<script>
-import {n2br} from "@/js/string-modifiers";
+<script lang="ts">
+import {n2br} from "@/scripts/string-modifiers";
+import {defineComponent} from "vue";
 
-export default {
+export default defineComponent({
     name: "ValidateParser",
     mounted() {
-        window['pyControls'].parserInstalled().then((data) => {
-            let result = JSON.parse(data)
+        window.pyControls.parserInstalled().then((data: string) => {  // eslint-disable-line no-undef
+            console.log(`data: ${data}`)
+            const result: { code: number; message: string } = JSON.parse(data)
 
             if (result['code'] === -1) {
-                this.log_lines.push(n2br('Error in python script\n\n'))
-                this.log_lines.push(n2br(result['message']))
+                this.logLines.push(n2br('Error in python script\n\n'))
+                this.logLines.push(n2br(result['message']))
             } else {
-                this.log_lines.push(n2br(result['message'] + "\n\nRedirecting..."))
+                this.logLines.push(n2br(result['message'] + "\n\nRedirecting..."))
                 this.$emit('parser-installed');
             }
         })
     },
     data() {
         return {
-            log_lines: [""]
+            logLines: [""]
         }
-    },
-    methods: {}
-}
+    }
+})
 </script>
 
 <style scoped>

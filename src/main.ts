@@ -1,7 +1,22 @@
-import Vue, { createApp } from 'vue';
-import App from './App.vue'
-import VueResource from 'vue-resource'
+'use strict'
 
-Vue.use(VueResource);
+import {createApp} from 'vue';
+import App from './App.vue';
+import store from './store';
+import {ScenarioRequest} from "@/interfaces/scenario";
 
-createApp(App).mount('#app')
+// Register all exposed variables here (from '/electron/preload.js')
+declare global {
+    interface Window {
+        pyControls: {
+            parserInstalled(): Promise<string>;
+        };
+        axios: {
+            retrieveScenario(): Promise<ScenarioRequest>;
+        };
+    }
+}
+
+createApp(App)
+    .use(store)
+    .mount('#app');

@@ -1,43 +1,64 @@
 <template>
     <div>
         <table>
+            <thead>
             <tr>
-                <td>ID</td>
-                <td>Name</td>
-                <td>Enabled</td>
-                <td>Looping</td>
-                <td>Description</td>
+                <th>ID</th>
+                <th>E</th>
+                <th>L</th>
+                <th>Name</th>
+                <th>Description</th>
             </tr>
-            <tr v-for="trigger in triggers" v-bind:key="trigger.id">
+            </thead>
+            <tbody>
+            <tr v-for="trigger in triggersInDO" v-bind:key="trigger['id']">
                 <td>{{ trigger['id'] }}</td>
+                <td><input type="checkbox" v-bind:checked="trigger['enabled']"></td>
+                <td><input type="checkbox" v-bind:checked="trigger['looping']"></td>
                 <td>{{ trigger['name'] }}</td>
-                <td>{{ trigger['enabled'] }}</td>
-                <td>{{ trigger['looping'] }}</td>
                 <td>{{ trigger['description'] }}</td>
             </tr>
+            </tbody>
         </table>
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import {Trigger, TriggerInformation} from "@/interfaces/scenario";
+import {defineComponent, PropType} from "vue";
+
+export default defineComponent({
     name: "TriggerOverview",
-    mounted() {
-        this.$http.get('http://localhost:5000/triggers').then(response => {
-            this.triggers = response.data.triggers  // Todo: Change API side to direct list, not object.triggers[...]
-        }, response => {
-            console.log("Failed")
-            console.log(response)
-        })
+    props: {
+        triggerInformation: {
+            type: Object as PropType<TriggerInformation>,
+            default: () => ({triggerDisplayOrder: [], triggers: []})
+        }
     },
-    data() {
-        return {
-            triggers: {}
+    data() {  // eslint-disable-line @typescript-eslint/no-empty-function
+    },
+    computed: {
+        triggersInDO: function (): Array<Trigger> {
+            return this.triggerInformation.triggerDisplayOrder.map(i => this.triggerInformation.triggers[i])
+        }
+    }
+})
+</script>
+
+<style lang="scss" scoped>
+table {
+    border-spacing: 0;
+
+    tr {
+        td {
+            text-align: left;
+        }
+
+        th {
+            background-color: whitesmoke;
+            position: sticky;
+            top: 0;
         }
     }
 }
-</script>
-
-<style scoped>
-
 </style>
