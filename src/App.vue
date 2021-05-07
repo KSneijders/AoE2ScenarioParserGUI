@@ -40,12 +40,33 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+$fonts: Avenir, Helvetica, Arial, sans-serif;
+
 #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
+    font-family: $fonts;
     -webkit-font-smoothing: antialiased;
     text-align: center;
     color: #2c3e50;
     margin-top: 2vh;
+}
+
+textarea {
+    font-family: $fonts;
+}
+
+.ws-render {
+    white-space: pre-wrap;
+}
+
+input[type=checkbox] {
+    background-image: url('~@/assets/unchecked.png');
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+}
+input[type=checkbox]:checked {
+    background-image: url('~@/assets/checked.png');
 }
 </style>

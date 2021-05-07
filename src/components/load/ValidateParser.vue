@@ -19,7 +19,6 @@ export default defineComponent({
     name: "ValidateParser",
     mounted() {
         window.pyControls.parserInstalled().then((data: string) => {  // eslint-disable-line no-undef
-            console.log(`data: ${data}`)
             const result: { code: number; message: string } = JSON.parse(data)
 
             if (result['code'] === -1) {

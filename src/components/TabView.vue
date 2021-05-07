@@ -57,8 +57,12 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 #tab-view {
+    background-color: white;
     width: 100%;
     text-align: left;
+    border-bottom: 1px solid black;
+    position: sticky;
+    top: 0;
 }
 .tab-item {
     display: inline-block;
