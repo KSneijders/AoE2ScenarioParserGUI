@@ -12,5 +12,7 @@ contextBridge.exposeInMainWorld('pyControls', {
 })
 
 contextBridge.exposeInMainWorld('axios', {
-    retrieveScenario: () => ipcRenderer.invoke('axios:retrieveScenario')
+    retrieveScenario: () => ipcRenderer.invoke('axios:retrieveScenario'),
+    getRequest: (url) => ipcRenderer.invoke('axios:getRequest', url),
+    sendScenario: (scenarioContent) => ipcRenderer.invoke('axios:sendScenario', scenarioContent)
 })

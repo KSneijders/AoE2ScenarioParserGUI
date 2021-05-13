@@ -4,7 +4,7 @@
               v-for="(entry, index) of tabs"
               v-bind:key="entry.name"
               v-on:click="selectTab(index)"
-              v-bind:class="{selected: (index === selectedTab)}"
+              v-bind:class="{selected: (index === selectedTab), disabled: !entry.enabled}"
         >
             {{ entry.name }}
         </div>
@@ -21,13 +21,14 @@ export default defineComponent({
     name: "TabView",
     data() {
         return {
+            selectedTab: 3,
             tabs: [
-                {'name': 'Players'},
-                {'name': 'Map'},
-                {'name': 'Units'},
-                {'name': 'Triggers'},
-            ] as Array<TabEntry>,
-            selectedTab: 3
+                {'name': 'Players',     'enabled': false},
+                {'name': 'Map',         'enabled': false},
+                {'name': 'Units',       'enabled': false},
+                {'name': 'Triggers',    'enabled': true},
+                {'name': 'TriggerText', 'enabled': false},
+            ] as Array<TabEntry>
         }
     },
     methods: {
@@ -35,8 +36,10 @@ export default defineComponent({
             return this.tabs.filter((entry: TabEntry) => entry.name === tabName)[0]
         },
         selectTab: function (index: number): void {
-            this.selectedTab = index
-            this.$emit('tab-select', this.tabs[index].name)
+            if (this.tabs[index].enabled) {
+                this.selectedTab = index
+                this.$emit('tab-select', this.tabs[index].name)
+            }
         }
     },
     mounted() {
@@ -46,7 +49,15 @@ export default defineComponent({
         const checkTabPress = (e: KeyboardEvent) => {
             if (e.code === "Tab" && e.ctrlKey) {
                 const direction = e.shiftKey ? -1 : 1
-                this.selectTab(mod(this.selectedTab + direction,  this.tabs.length))
+                let newIndex = mod(this.selectedTab + direction,  this.tabs.length)
+
+                let maxSteps = 10;  // No inf loop!
+                while (!this.tabs[newIndex].enabled && maxSteps > 0) {
+                    newIndex = mod(newIndex + direction,  this.tabs.length)
+                    maxSteps--
+                }
+
+                if (maxSteps !== 0) this.selectTab(newIndex)
             }
         }
         document?.querySelector('body')?.addEventListener('keyup', checkTabPress);
@@ -81,7 +92,16 @@ export default defineComponent({
     }
 
     &.selected {
-        background-color: whitesmoke;
+        background-color: lightgray;
+    }
+
+    &.disabled {
+        color: #d0d0d0;
+        border-color: #d0d0d0;
+
+        &:hover {
+            cursor: not-allowed;
+        }
     }
 }
 </style>
