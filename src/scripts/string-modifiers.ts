@@ -2,6 +2,10 @@ export function n2br(s: string): string {
     return s.replace(/(?:\r\n|\r|\n)/g, '<br/>')
 }
 
+export function _2dash(s: string): string {
+    return s.replaceAll('_', '-')
+}
+
 /**
  * Converts snake_case_text to Spaced Pascal Case Text
  *

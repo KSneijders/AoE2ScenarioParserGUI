@@ -34,7 +34,7 @@ import TabView from "./components/TabView.vue";
 import {defineComponent} from "vue";
 import {EventObject} from "@/interfaces/general";
 import {TriggerInformation} from "@/interfaces/triggers";
-import {triggers} from "@/defaults/triggers";
+import {defaultTrigger} from "@/defaults/default-trigger";
 
 export default defineComponent({
     name: "App",
@@ -84,7 +84,7 @@ export default defineComponent({
             window.axios.retrieveScenario().then(response => {
                 this.triggerInformation = response.triggerInformation
             }).catch(error => {
-                const t = Object.assign({}, triggers);
+                const t = Object.assign({}, defaultTrigger);
                 t.id = 0
                 t.name = error.message
                 this.triggerInformation = {triggers: [t], triggerDisplayOrder: [0]}
@@ -96,6 +96,10 @@ export default defineComponent({
 
 <style lang="scss">
 $fonts: Avenir, Helvetica, Arial, sans-serif;
+
+* {
+    box-sizing: border-box;
+}
 
 #app {
     font-family: $fonts;

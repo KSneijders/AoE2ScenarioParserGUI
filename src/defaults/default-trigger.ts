@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-export const triggers = {
+export const defaultTrigger = {
     id: -1,
     name: "default trigger",
     enabled: true,
@@ -12,6 +12,10 @@ export const triggers = {
     display_as_objective: false,
     display_on_screen: false,
     header: false,
-    mute_objectives: false
+    mute_objectives: false,
+    conditions: [],
+    condition_order: [],
+    effects: [],
+    effect_order: [],
 }
 /* eslint-enable @typescript-eslint/camelcase */

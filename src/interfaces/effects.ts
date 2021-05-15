@@ -1,5 +1,6 @@
 
 export interface Effect {
+    [key: string]: number | undefined | string | boolean;
     effect_type: number;
     ai_script_goal?: number;
     armour_attack_quantity?: number;

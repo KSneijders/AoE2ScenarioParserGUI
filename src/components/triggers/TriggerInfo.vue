@@ -14,7 +14,7 @@
         </div>
         <div class="row">
             <div style="float: left;"><b>Description</b>:</div>
-            <div style="text-align: right; margin-right: -4%">
+            <div style="text-align: right;">
                 <b>STID</b>:
                 <input class="stid"
                        v-bind:value="selectedTrigger.description_stid"
@@ -26,7 +26,7 @@
         </div>
         <div class="row">
             <div style="float: left;"><b>Short Description</b>:</div>
-            <div style="text-align: right; margin-right: -4%">
+            <div style="text-align: right;">
                 <b>STID</b>:
                 <input v-bind:value="selectedTrigger.short_description_stid" class="stid"
                        @change="update( 'short_description_stid', $event)">
@@ -70,7 +70,7 @@ export default defineComponent({
         }
     },
     methods: {
-        update(name: string , event: EventObject): void {
+        updateCE(name: string , event: EventObject): void {
             let value: string | boolean = event.target.value
 
             if (event.target.type == "checkbox")
@@ -88,7 +88,7 @@ export default defineComponent({
 #trigger-info {
     height: 70vh;
     padding: 5px;
-    width: 90%;
+    width: 100%;
 
     .row {
         border-bottom: 1px dotted gray;
@@ -111,9 +111,9 @@ export default defineComponent({
 
         .stid {
             width: 20%;
-            padding: 1px;
+            padding: 6px;
             margin: 0;
-            height: 1em
+            height: 1.5em
         }
     }
 

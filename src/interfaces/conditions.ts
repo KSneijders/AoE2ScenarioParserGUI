@@ -1,4 +1,5 @@
 export interface Condition {
+    [key: string]: number | undefined | string | boolean;
     condition_type: number;
     quantity?: number;
     attribute?: number;

@@ -15,3 +15,5 @@ export interface ParserInstalledRequest {
     code: number;
     message: string;
 }
+
+export type Value = string | number | boolean

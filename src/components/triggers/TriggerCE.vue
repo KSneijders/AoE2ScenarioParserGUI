@@ -3,8 +3,8 @@
         <div id="ce-list">
             <table class="selectable-list">
                 <tr>
-                    <th>Type</th>
-                    <th>ID</th>
+                    <th style="width: 30px; text-align: center">Type</th>
+                    <th style="width: 30px; text-align: center">ID</th>
                     <th>Object</th>
                 </tr>
                 <tr
@@ -28,7 +28,12 @@
             </table>
         </div>
         <div id="ce-content">
-
+            <ConditionView></ConditionView>
+            <EffectView
+                v-if="selectedType === 'e'"
+                :effect="selectedTrigger.effects[selectedIndex]"
+                @update-value="updateEffect"
+            ></EffectView>
         </div>
     </div>
 </template>
@@ -37,12 +42,20 @@
 import {defineComponent, PropType} from "vue";
 import {Trigger} from "@/interfaces/triggers";
 import {snakeToSpacedPascal} from "@/scripts/string-modifiers";
+import {Condition} from "@/interfaces/conditions";
+import {Effect} from "@/interfaces/effects";
+import {defaultTrigger} from "@/defaults/default-trigger";
+import EffectView from "@/components/triggers/EffectView.vue";
+import ConditionView from "@/components/triggers/ConditionView.vue";
+import {Value} from "@/interfaces/general";
 
 export default defineComponent({
     name: "TriggerCE",
+    components: {ConditionView, EffectView},
     props: {
         selectedTrigger: {
-            type: Object as PropType<Trigger>
+            type: Object as PropType<Trigger>,
+            default: () => (defaultTrigger)
         }
     },
     data() {
@@ -62,26 +75,36 @@ export default defineComponent({
         }
     },
     computed: {
-        conditionsInDO: function (): Array<Trigger> {
-            return this.selectedTrigger.condition_order.map(i => this.selectedTrigger.conditions[i])
+        conditionsInDO: function (): Array<Condition> {
+            return this.selectedTrigger.condition_order.map(i => this.selectedTrigger.conditions[i]) || []
         },
-        effectsInDO: function (): Array<Trigger> {
+        effectsInDO: function (): Array<Effect> {
             return this.selectedTrigger.effect_order.map(i => this.selectedTrigger.effects[i])
         },
     },
     methods: {
-        selectEntry(type, index) {
-            this.selectedType = type
+        updateCE(ceType: string, attr: string, value: Value) {
+            if (ceType === this.selectedType)
+                this.$emit('update-ce', ceType, this.selectedIndex, attr, value)
+        },
+        updateCondition(attr: string, value: Value) {
+            this.updateCE('c', attr, value)
+        },
+        updateEffect(attr: string, value: Value) {
+            this.updateCE('e', attr, value)
+        },
+        selectEntry(ceType: string, index: number) {
+            this.selectedType = ceType
             this.selectedIndex = index
         },
         resetSelected() {
             this.selectedIndex = -1
             this.selectedType = ''
         },
-        conditionName(cIndex) {
+        conditionName(cIndex: number) {
             return snakeToSpacedPascal(this.$store.state.conditionNames[cIndex])
         },
-        effectName(eIndex) {
+        effectName(eIndex: number) {
             return snakeToSpacedPascal(this.$store.state.effectNames[eIndex])
         }
     }
@@ -91,10 +114,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 #ce-overview {
     display: flex;
+    width: 100%;
 
     #ce-list {
         flex: 1;
-        min-width: 350px;
         overflow-y: auto;
 
         tr {
@@ -103,8 +126,9 @@ export default defineComponent({
     }
 
     #ce-content {
+        flex: 1;
         border-left: 1px solid black;
-        flex: 3;
+        overflow-y: auto
     }
 }
 
