@@ -1,0 +1,3 @@
+[submodule "AoE2ScenarioParserAPI"]
+	path = AoE2ScenarioParserAPI
+	url = https://github.com/KSneijders/AoE2ScenarioParserAPI
