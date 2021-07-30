@@ -8,11 +8,16 @@ const {contextBridge, ipcRenderer} = require('electron')
 
 // Set up context bridge between the renderer process and the main process
 contextBridge.exposeInMainWorld('pyControls', {
-    parserInstalled: () => ipcRenderer.invoke('pyControls:parserInstalled')
+    parserInstalled: () => ipcRenderer.invoke('pyControls:parserInstalled'),
+    startAPI: (scenarioPath) => ipcRenderer.invoke('pyControls:startAPI', scenarioPath),
 })
 
 contextBridge.exposeInMainWorld('axios', {
     retrieveScenario: () => ipcRenderer.invoke('axios:retrieveScenario'),
     getRequest: (url) => ipcRenderer.invoke('axios:getRequest', url),
     sendScenario: (scenarioContent) => ipcRenderer.invoke('axios:sendScenario', scenarioContent)
+})
+
+contextBridge.exposeInMainWorld('fileControls', {
+    select: () => ipcRenderer.invoke('fileControls:select')
 })

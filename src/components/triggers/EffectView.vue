@@ -339,7 +339,7 @@
                 <td><input type="number"
                            v-bind:id="_2dash('message')"
                            @change="update('message', $event)"
-                           v-bind:value="effect.message"></td>
+                           v-bind:value="effect.subMessage"></td>
             </tr>
             <tr v-if="effectHasAttr('sound_name')">
                 <td><label v-bind:for="_2dash('sound_name')">{{ sp('sound_name') }}</label></td>
@@ -363,7 +363,7 @@
 import {defineComponent, PropType} from "vue";
 import {Effect} from "@/interfaces/effects";
 import {_2dash, snakeToSpacedPascal} from "@/scripts/string-modifiers";
-import {EventObject} from "@/interfaces/general";
+import {EventObject, Value} from "@/interfaces/general";
 import {defaultEffect} from "@/defaults/default-effect";
 import {hasOnlyDigits} from "@/scripts/validation";
 
@@ -381,7 +381,7 @@ export default defineComponent({
             return snakeToSpacedPascal(str)
         },
         update(attr: string, event: EventObject): void {
-            let value: string | boolean = event.target.value
+            let value: Value = event.target.value
             console.log(attr, value, typeof value)
 
             if (hasOnlyDigits(value))

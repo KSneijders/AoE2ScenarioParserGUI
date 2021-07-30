@@ -11,7 +11,7 @@ export const defaultTrigger = {
     description_order: 0,
     display_as_objective: false,
     display_on_screen: false,
-    header: false,
+    headerMessage: false,
     mute_objectives: false,
     conditions: [],
     condition_order: [],

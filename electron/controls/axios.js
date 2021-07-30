@@ -5,11 +5,12 @@ ipcMain.handle('axios:retrieveScenario',  () => {
     return new Promise(async function (resolve, reject) {
         try {
             const response = await axios.get('http://localhost:5000/file')
-            resolve(response.data)
+            resolve({success: true, data: response.data})
         } catch (e) {
-            reject(e)
+            console.log(`Sending axios:retrieveScenario --> Rejected`);
+            resolve({success: false, data: {}, error: {reason: e.message}})
         }
-    })
+    });
 });
 
 ipcMain.handle('axios:getRequest', (_, args) => {
@@ -18,10 +19,8 @@ ipcMain.handle('axios:getRequest', (_, args) => {
         try {
             const response = await axios.get('http://localhost:5000/' + url)
             resolve(response.data)
-        } catch (e) {
-            reject(e)
-        }
-    })
+        } catch (e) {}
+    });
 })
 
 ipcMain.handle('axios:sendScenario', async (scenario) => {
@@ -40,5 +39,5 @@ ipcMain.handle('axios:sendScenario', async (scenario) => {
         },
     });
     console.log("Success?!")
-    console.log(response)
+    console.log(`Response: ${response}`)
 });

@@ -50,7 +50,7 @@
             <input type="checkbox" v-bind:checked="selectedTrigger.display_on_screen"
                    @change="update( 'display_on_screen', $event)">
             <b>Display On Screen</b><br/>
-            <input type="checkbox" v-bind:checked="selectedTrigger.header"
+            <input type="checkbox" v-bind:checked="selectedTrigger.headerMessage"
                    @change="update( 'header', $event)">
             <b>Header</b>
         </div>

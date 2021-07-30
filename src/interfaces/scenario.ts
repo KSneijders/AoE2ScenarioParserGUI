@@ -1,7 +1,13 @@
 import {TriggerInformation} from "@/interfaces/triggers";
 
 export interface ScenarioRequest {
-    triggerInformation: TriggerInformation;
+    success: boolean;
+    data: {
+        triggerInformation: TriggerInformation;
+    };
+    error?: {
+        reason: string;
+    };
 }
 
 export interface ScenarioRequestReturn {

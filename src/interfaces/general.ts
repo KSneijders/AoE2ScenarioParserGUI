@@ -16,4 +16,12 @@ export interface ParserInstalledRequest {
     message: string;
 }
 
+export interface FileSelected {
+    filepath: string;
+}
+
+export interface FileSelectionError {
+    reason: string;
+}
+
 export type Value = string | number | boolean

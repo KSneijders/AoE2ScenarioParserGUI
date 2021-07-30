@@ -1,27 +1,36 @@
 <template>
     <div id="app">
+        <div>
+            <input name="temp" type="text" v-model="scenarioPath"/>
+            <button v-on:click="startAPI()">start API</button>
+            <button v-on:click="retrieveScenario()">retrieve</button>
+            <button v-on:click="openFilePrompt()">open file prompt</button>
+        </div>
+
         <ValidateParser v-on:parser-installed="parserValidated = true" v-if="!parserValidated"></ValidateParser>
         <div v-if="parserValidated">
-            <TabView v-on:tab-select="selectedTab = $event"></TabView>
+            <TabView v-on:tab-select="updateSelectedTabName"></TabView>
 
             <div id="container">
-                <div v-if="!scenarioReceived" style="padding: 30px; font-size: 20px">
-                    Retrieving scenario...
+                <div v-if="!loadingStatus.finished">
+                    <span id="scenario-status-header">{{ loadingStatus.headerMessage }}</span> <br>
+                    <div v-html="loadingStatus.errorMessage"></div>
+                    <div v-html="loadingStatus.pythonLog"></div>
                 </div>
 
                 <TriggerView
-                    v-if="selectedTab === 'Triggers' && scenarioReceived"
+                    v-if="selectedTabName === 'Triggers' && loadingStatus.finished"
                     :triggerInformation="triggerInformation"
                 ></TriggerView>
 
-                <div v-if="selectedTab === 'TriggerText'" style="text-align: left; font-size: 20px">
-                    <button style="display: block; margin: 10px 0; padding: 3px">Save</button>
-                    <textarea
-                        v-bind:value="triggersAsJson"
-                        @change="updateTriggers"
-                        style="height: 85vh; width: 90%; font-size: 20px; font-family: monospace">
-                    </textarea>
-                </div>
+<!--                <div v-if="selectedTabName === 'TriggerText'" style="text-align: left; font-size: 20px">-->
+<!--                    <button style="display: block; margin: 10px 0; padding: 3px">Save</button>-->
+<!--                    <textarea-->
+<!--                        v-bind:value="triggersAsJson"-->
+<!--                        @change="updateTriggers"-->
+<!--                        style="height: 85vh; width: 90%; font-size: 20px; font-family: monospace">-->
+<!--                    </textarea>-->
+<!--                </div>-->
             </div>
         </div>
     </div>
@@ -32,9 +41,8 @@ import ValidateParser from "./components/load/ValidateParser.vue";
 import TriggerView from "./components/triggers/TriggerOverview.vue";
 import TabView from "./components/TabView.vue";
 import {defineComponent} from "vue";
-import {EventObject} from "@/interfaces/general";
+import {EventObject, FileSelected, FileSelectionError} from "@/interfaces/general";
 import {TriggerInformation} from "@/interfaces/triggers";
-import {defaultTrigger} from "@/defaults/default-trigger";
 
 export default defineComponent({
     name: "App",
@@ -45,9 +53,15 @@ export default defineComponent({
     },
     data() {
         return {
-            selectedTab: '???',  // Updated from TabView
+            selectedTabName: '???',  // Selected tab is handled in TabView
+            scenarioPath: "C:/Users/Kerwin Sneijders/Games/Age of Empires 2 DE/76561198140740017/resources/_common/scenario/test1212.aoe2scenario",
             parserValidated: false,
-            scenarioReceived: false,
+            loadingStatus: {
+                finished: false,
+                headerMessage: "Loading...",
+                errorMessage: "",
+                pythonLog: "",
+            },
             triggerInformation: {
                 triggers: [],
                 triggerDisplayOrder: []
@@ -55,41 +69,62 @@ export default defineComponent({
         }
     },
     computed: {
-        triggersAsJson: function (): string {
-            return JSON.stringify(this.triggerInformation, null, 2)
-        }
+        // triggersAsJson: function (): string {
+        //     return JSON.stringify(this.triggerInformation, null, 2)
+        // }
     },
     methods: {
+        startAPI: function () {
+            console.log(this.scenarioPath)
+            window.pyControls.startAPI(this.scenarioPath)
+        },
+        openFilePrompt: function () {
+            window.fileControls.select()
+                .then((value: FileSelected) => {
+                    console.log(value.filepath);
+                    this.scenarioPath = value.filepath;
+                })
+                .catch((error: FileSelectionError) => {
+                    console.log(error.reason)
+                })
+        },
         updateTriggers: function (event: EventObject) {
             this.triggerInformation = JSON.parse(event.target.value)
+        },
+        updateSelectedTabName: function (newSelectedTabName: string): void {
+            this.selectedTabName = newSelectedTabName;
+        },
+        retrieveScenario: function () {
+            window.pyControls.parserInstalled().then(response => {
+                if (response.code > 0) this.parserValidated = true;
+
+                window.axios.getRequest('effect/attributes')
+                    .then(response => this.$store.state.effectAttributes = response)
+                window.axios.getRequest('condition/attributes')
+                    .then(response => this.$store.state.conditionAttributes = response)
+                window.axios.getRequest('effect/names')
+                    .then(response => this.$store.state.effectNames = response)
+                window.axios.getRequest('condition/names')
+                    .then(response => this.$store.state.conditionNames = response)
+
+                window.axios.retrieveScenario().then(response => {
+                    if (response.success) {
+                        this.triggerInformation = response.data.triggerInformation
+                        this.loadingStatus.finished = true
+                    } else {
+                        this.loadingStatus.finished = false
+                        this.loadingStatus.headerMessage = "Unable to load scenario";
+                        if (response.error) this.loadingStatus.errorMessage = response.error.reason;
+                    }
+                })
+            })
         }
     },
     mounted() {
-        window.pyControls.parserInstalled().then(response => {
-            if (response.code > 0) this.parserValidated = true;
-
-            window.axios.getRequest('effect/attributes').then(response => {
-                this.$store.state.effectAttributes = response
-            })
-            window.axios.getRequest('condition/attributes').then(response => {
-                this.$store.state.conditionAttributes = response
-            })
-            window.axios.getRequest('effect/names').then(response => {
-                this.$store.state.effectNames = response
-            })
-            window.axios.getRequest('condition/names').then(response => {
-                this.$store.state.conditionNames = response
-            })
-
-            window.axios.retrieveScenario().then(response => {
-                this.triggerInformation = response.triggerInformation
-            }).catch(error => {
-                const t = Object.assign({}, defaultTrigger);
-                t.id = 0
-                t.name = error.message
-                this.triggerInformation = {triggers: [t], triggerDisplayOrder: [0]}
-            }).finally(() => this.scenarioReceived= true)
-        })
+        // require('electron').ipcRenderer.on('menu-action-clicked', (event: any, message: any) => {
+        //     console.log(message) // Prints 'whoooooooh!'
+        // })
+        this.retrieveScenario();
     }
 })
 </script>
@@ -111,7 +146,13 @@ $fonts: Avenir, Helvetica, Arial, sans-serif;
 }
 
 #container {
-    height: calc(100vh - 32px);;
+    height: calc(100vh - 32px);
+
+    #scenario-status-header {
+        display: inline-block;
+        padding: 30px;
+        font-size: 20px
+    }
 }
 
 textarea {
@@ -176,5 +217,10 @@ table.selectable-list {
             background-color: lightgray;
         }
     }
+}
+
+button {
+    padding: 3px;
+
 }
 </style>

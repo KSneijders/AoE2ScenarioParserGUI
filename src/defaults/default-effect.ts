@@ -46,7 +46,7 @@ export const defaultEffect = {
     facet: -1,
     play_sound: -1,
     player_color: -1,
-    message: "",
+    subMessage: "",
     sound_name: "",
     selected_object_ids: -1,
 }
