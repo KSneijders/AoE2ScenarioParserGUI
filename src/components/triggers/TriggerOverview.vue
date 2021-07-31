@@ -9,7 +9,7 @@
                 <TriggerInfo
                     v-if="selectedTriggerIndex !== -1"
                     :selectedTrigger="selectedTrigger"
-                    v-on:update-value="updateValue">
+                    v-on:update-value="updateTriggerValue">
                 </TriggerInfo>
             </div>
         </div>
@@ -93,7 +93,7 @@ export default defineComponent({
         }
     },
     methods: {
-        updateValue(attr: string, value: Value): void {
+        updateTriggerValue(attr: string, value: Value): void {
             this.selectedTrigger[attr] = value
         },
         updateCEValue(ceType: string, index: number, attr: string, value: Value): void {

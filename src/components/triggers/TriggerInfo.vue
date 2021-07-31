@@ -2,14 +2,14 @@
     <div id="trigger-info">
         <div class="row">
             <label for="s-trigger-name"><b>Name</b>: </label><br/>
-            <input id="s-trigger-name" @change="update( 'name', $event)" v-bind:value="selectedTrigger.name">
+            <input id="s-trigger-name" @change="updateTrigger('name', $event)" v-bind:value="selectedTrigger.name">
         </div>
         <div class="row">
             <input id="s-trigger-enabled" type="checkbox"
-                   @change="update( 'enabled', $event)" v-bind:checked="selectedTrigger.enabled">
+                   @change="updateTrigger('enabled', $event)" v-bind:checked="selectedTrigger.enabled">
             <label for="s-trigger-enabled"><b>Enabled</b></label><br/>
             <input id="s-trigger-looping" type="checkbox"
-                   @change="update( 'looping', $event)" v-bind:checked="selectedTrigger.looping">
+                   @change="updateTrigger('looping', $event)" v-bind:checked="selectedTrigger.looping">
             <label for="s-trigger-looping"><b>Looping</b></label>
         </div>
         <div class="row">
@@ -18,40 +18,40 @@
                 <b>STID</b>:
                 <input class="stid"
                        v-bind:value="selectedTrigger.description_stid"
-                       @change="update( 'description_stid', $event)">
+                       @change="updateTrigger('description_stid', $event)">
             </div>
             <textarea rows="2"
                       v-bind:value="selectedTrigger.description"
-                      @change="update( 'description', $event)"></textarea>
+                      @change="updateTrigger('description', $event)"></textarea>
         </div>
         <div class="row">
             <div style="float: left;"><b>Short Description</b>:</div>
             <div style="text-align: right;">
                 <b>STID</b>:
                 <input v-bind:value="selectedTrigger.short_description_stid" class="stid"
-                       @change="update( 'short_description_stid', $event)">
+                       @change="updateTrigger('short_description_stid', $event)">
             </div>
             <textarea rows="2" v-bind:value="selectedTrigger.short_description"
-                      @change="update( 'short_description', $event)"></textarea>
+                      @change="updateTrigger('short_description', $event)"></textarea>
         </div>
         <div class="row">
             <label for="s-description-order"><b>Description Order</b>: </label><br/>
             <input id="s-description-order" type="number"
                    v-bind:value="selectedTrigger.description_order"
-                   @change="update( 'description_order', $event)">
+                   @change="updateTrigger('description_order', $event)">
         </div>
         <div class="row">
             <input type="checkbox" v-bind:checked="selectedTrigger.display_as_objective"
-                   @change="update( 'display_as_objective', $event)">
+                   @change="updateTrigger('display_as_objective', $event)">
             <b>Display As Objective</b><br/>
             <input type="checkbox" v-bind:checked="selectedTrigger.mute_objectives"
-                   @change="update( 'mute_objectives', $event)">
+                   @change="updateTrigger('mute_objectives', $event)">
             <b>Mute Objectives</b><br/>
             <input type="checkbox" v-bind:checked="selectedTrigger.display_on_screen"
-                   @change="update( 'display_on_screen', $event)">
+                   @change="updateTrigger('display_on_screen', $event)">
             <b>Display On Screen</b><br/>
             <input type="checkbox" v-bind:checked="selectedTrigger.headerMessage"
-                   @change="update( 'header', $event)">
+                   @change="updateTrigger('header', $event)">
             <b>Header</b>
         </div>
     </div>
@@ -70,7 +70,7 @@ export default defineComponent({
         }
     },
     methods: {
-        updateCE(name: string , event: EventObject): void {
+        updateTrigger(name: string , event: EventObject): void {
             let value: string | boolean = event.target.value
 
             if (event.target.type == "checkbox")

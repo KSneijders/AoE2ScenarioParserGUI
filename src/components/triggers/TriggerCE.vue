@@ -8,27 +8,31 @@
                     <th>Object</th>
                 </tr>
                 <tr
-                    v-for="(condition, index) in conditionsInDO"
+                    v-for="(condition, index) in selectedTrigger.conditions"
                     v-bind:key="index"
                     v-on:click="selectEntry('c', index)"
                     v-bind:class="{selected: (selectedIndex === index && selectedType === 'c')}">
                     <td><b>C</b></td>
-                    <td>{{index}}</td>
-                    <td>{{conditionName(condition.condition_type)}}</td>
+                    <td>{{ index }}</td>
+                    <td>{{ conditionName(condition.condition_type) }}</td>
                 </tr>
                 <tr
-                    v-for="(effect, index) in effectsInDO"
+                    v-for="(effect, index) in selectedTrigger.effects"
                     v-bind:key="index"
                     v-on:click="selectEntry('e', index)"
                     v-bind:class="{selected: (selectedIndex === index && selectedType === 'e')}">
                     <td><b>E</b></td>
-                    <td>{{index}}</td>
-                    <td>{{effectName(effect.effect_type)}}</td>
+                    <td>{{ index }}</td>
+                    <td>{{ effectName(effect.effect_type) }}</td>
                 </tr>
             </table>
         </div>
         <div id="ce-content">
-            <ConditionView></ConditionView>
+            <ConditionView
+                v-if="selectedType === 'c'"
+                :condition="selectedTrigger.conditions[selectedIndex]"
+                @update-value="updateCondition"
+            ></ConditionView>
             <EffectView
                 v-if="selectedType === 'e'"
                 :effect="selectedTrigger.effects[selectedIndex]"
@@ -42,8 +46,6 @@
 import {defineComponent, PropType} from "vue";
 import {Trigger} from "@/interfaces/triggers";
 import {snakeToSpacedPascal} from "@/scripts/string-modifiers";
-import {Condition} from "@/interfaces/conditions";
-import {Effect} from "@/interfaces/effects";
 import {defaultTrigger} from "@/defaults/default-trigger";
 import EffectView from "@/components/triggers/EffectView.vue";
 import ConditionView from "@/components/triggers/ConditionView.vue";
@@ -65,7 +67,7 @@ export default defineComponent({
         }
     },
     watch: {
-        selectedTrigger () {
+        selectedTrigger() {
             if (this.selectedTrigger.conditions.length > 0)
                 this.selectEntry('c', 0)
             else if (this.selectedTrigger.effects.length > 0)
@@ -74,14 +76,7 @@ export default defineComponent({
                 this.resetSelected()
         }
     },
-    computed: {
-        conditionsInDO: function (): Array<Condition> {
-            return this.selectedTrigger.condition_order.map(i => this.selectedTrigger.conditions[i]) || []
-        },
-        effectsInDO: function (): Array<Effect> {
-            return this.selectedTrigger.effect_order.map(i => this.selectedTrigger.effects[i])
-        },
-    },
+    computed: {},
     methods: {
         updateCE(ceType: string, attr: string, value: Value) {
             if (ceType === this.selectedType)
@@ -94,12 +89,13 @@ export default defineComponent({
             this.updateCE('e', attr, value)
         },
         selectEntry(ceType: string, index: number) {
+            console.log(ceType, index)
             this.selectedType = ceType
             this.selectedIndex = index
         },
         resetSelected() {
-            this.selectedIndex = -1
             this.selectedType = ''
+            this.selectedIndex = -1
         },
         conditionName(cIndex: number) {
             return snakeToSpacedPascal(this.$store.state.conditionNames[cIndex])
