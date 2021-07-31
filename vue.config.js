@@ -8,6 +8,8 @@ module.exports = {
             chunkFilename: './[name].js',
         },
         watchOptions: {
+            // Ignore items for webpack rebuilds. Electron reloads aren't affected by this
+            // For electron reloads, check electron/main.js (top of the file)
             ignored: [
                 'node_modules/**/*',
                 'logs/**/*',

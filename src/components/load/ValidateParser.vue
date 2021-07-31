@@ -18,18 +18,21 @@ import {defineComponent} from "vue";
 export default defineComponent({
     name: "ValidateParser",
     mounted() {
-        window.pyControls.parserInstalled().then((data) => {  // eslint-disable-line no-undef
-            if (data['code'] === -1) {
-                this.logLines.push(n2br('Error in python script\n\n'))
-                this.logLines.push(n2br(data['message']))
-            } else {
-                this.logLines.push(n2br(data['message'] + "\n\nRedirecting..."))
-                this.$emit('parser-installed');
-            }
-        }).catch((reason => {
-            console.log("CATCH!")
-            console.log(reason)
-        }))
+        window.pyControls.parserInstalled()
+            .then((response) => JSON.parse(response))
+            .then((jsonResponse) => {  // eslint-disable-line no-undef
+                if (jsonResponse['code'] === -1) {
+                    this.logLines.push(n2br('Error in python script\n\n'))
+                    this.logLines.push(n2br(jsonResponse['message']))
+                } else {
+                    this.logLines.push(n2br(jsonResponse['message'] + "\n\nRedirecting..."))
+                    this.$emit('parser-installed');
+                }
+            }).catch((reason => {
+                console.log("CATCH!");
+                console.log(reason);
+            })
+        )
     },
     data() {
         return {

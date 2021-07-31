@@ -155,7 +155,7 @@
             </tr>
             <tr v-if="conditionHasAttr('xs_function')">
                 <td><label v-bind:for="_2dash('xs_function')">{{ sp('xs_function') }}</label></td>
-                <td><input type="number"
+                <td><input type="text"
                            v-bind:id="_2dash('xs_function')"
                            @change="update('xs_function', $event)"
                            v-bind:value="condition.xs_function"></td>
@@ -197,10 +197,6 @@ export default defineComponent({
             this.$emit('update-value', attr, value)
         },
         conditionHasAttr(attr: string): boolean {
-            console.log(attr)
-            console.log(this.condition.condition_type)
-            console.log(this.$store.state.conditionAttributes[this.condition.condition_type])
-            console.log(this.$store.state.conditionAttributes[this.condition.condition_type].includes(attr))
             return this.$store.state.conditionAttributes[this.condition.condition_type].includes(attr)
         },
         conditionNames: function (): Record<string, string> {

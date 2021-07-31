@@ -11,6 +11,8 @@ try {
     // Use electron-reloader reload electron when changes have been made.
     require('electron-reloader')(
         module,{
+            // Ignore items for Electron Reloads. Webpack rebuilds aren't affected by this.
+            // For Webpack rebuilds, check vue.config.js (bottom of the file)
             ignore: [
                 path.join(__dirname, '..', 'src'),
                 path.join(__dirname, '..', 'logs'),

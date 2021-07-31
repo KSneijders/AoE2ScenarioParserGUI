@@ -174,7 +174,9 @@
                            v-bind:value="effect.object_type"></td>
             </tr>
             <tr v-if="effectHasAttr('instruction_panel_position')">
-                <td><label v-bind:for="_2dash('instruction_panel_position')">{{sp('instruction_panel_position')}}</label></td>
+                <td><label
+                    v-bind:for="_2dash('instruction_panel_position')">{{ sp('instruction_panel_position') }}</label>
+                </td>
                 <td><input type="number"
                            v-bind:id="_2dash('instruction_panel_position')"
                            @change="update('instruction_panel_position', $event)"
@@ -244,7 +246,8 @@
                            v-bind:value="effect.flash_object"></td>
             </tr>
             <tr v-if="effectHasAttr('force_research_technology')">
-                <td><label v-bind:for="_2dash('force_research_technology')">{{sp('force_research_technology')}}</label></td>
+                <td><label
+                    v-bind:for="_2dash('force_research_technology')">{{ sp('force_research_technology') }}</label></td>
                 <td><input type="number"
                            v-bind:id="_2dash('force_research_technology')"
                            @change="update('force_research_technology', $event)"
@@ -335,15 +338,18 @@
                            v-bind:value="effect.player_color"></td>
             </tr>
             <tr v-if="effectHasAttr('message')">
-                <td><label v-bind:for="_2dash('message')">{{ sp('message') }}</label></td>
-                <td><input type="number"
+                <td colspan="2">
+                    <label v-bind:for="_2dash('message')">{{ sp('message') }}</label>
+                    <br/>
+                    <input type="text"
                            v-bind:id="_2dash('message')"
                            @change="update('message', $event)"
-                           v-bind:value="effect.subMessage"></td>
+                           v-bind:value="effect.message">
+                </td>
             </tr>
             <tr v-if="effectHasAttr('sound_name')">
                 <td><label v-bind:for="_2dash('sound_name')">{{ sp('sound_name') }}</label></td>
-                <td><input type="number"
+                <td><input type="text"
                            v-bind:id="_2dash('sound_name')"
                            @change="update('sound_name', $event)"
                            v-bind:value="effect.sound_name"></td>
@@ -382,7 +388,6 @@ export default defineComponent({
         },
         update(attr: string, event: EventObject): void {
             let value: Value = event.target.value
-            console.log(attr, value, typeof value)
 
             if (hasOnlyDigits(value))
                 value = parseInt(value)
@@ -435,6 +440,11 @@ export default defineComponent({
 
     input[type="number"] {
         width: 100px;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        margin-left: 0;
     }
 
     input.small_input {

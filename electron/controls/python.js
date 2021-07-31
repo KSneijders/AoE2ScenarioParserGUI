@@ -60,6 +60,8 @@ ipcMain.handle('pyControls:startAPI',  async (event, scenarioPath) => {
     const out = fs.openSync(pythonLogFilePath, 'a');
     const err = fs.openSync(pythonLogFilePath, 'a');
 
+    console.log(`Spawning: ${scenarioPath}`)
+
     process.chdir('./AoE2ScenarioParserAPI/');
     API_REF = spawn('python', ['-m', "AoE2ScenarioParserAPI", `-f "${scenarioPath}"`],
         {

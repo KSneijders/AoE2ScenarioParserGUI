@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <div>
-            <input name="temp" type="text" v-model="scenarioPath"/>
+            <input name="temp" type="text" v-model="selectedScenarioPath"/>
             <button v-on:click="startAPI()">start API</button>
             <button v-on:click="retrieveScenario()">retrieve</button>
             <button v-on:click="openFilePrompt()">open file prompt</button>
@@ -21,16 +21,17 @@
                 <TriggerView
                     v-if="selectedTabName === 'Triggers' && loadingStatus.finished"
                     :triggerInformation="triggerInformation"
+                    @trigger-update="updateTriggers"
                 ></TriggerView>
 
-<!--                <div v-if="selectedTabName === 'TriggerText'" style="text-align: left; font-size: 20px">-->
-<!--                    <button style="display: block; margin: 10px 0; padding: 3px">Save</button>-->
-<!--                    <textarea-->
-<!--                        v-bind:value="triggersAsJson"-->
-<!--                        @change="updateTriggers"-->
-<!--                        style="height: 85vh; width: 90%; font-size: 20px; font-family: monospace">-->
-<!--                    </textarea>-->
-<!--                </div>-->
+                <!--                <div v-if="selectedTabName === 'TriggerText'" style="text-align: left; font-size: 20px">-->
+                <!--                    <button style="display: block; margin: 10px 0; padding: 3px">Save</button>-->
+                <!--                    <textarea-->
+                <!--                        v-bind:value="triggersAsJson"-->
+                <!--                        @change="updateTriggers"-->
+                <!--                        style="height: 85vh; width: 90%; font-size: 20px; font-family: monospace">-->
+                <!--                    </textarea>-->
+                <!--                </div>-->
             </div>
         </div>
     </div>
@@ -41,8 +42,8 @@ import ValidateParser from "./components/load/ValidateParser.vue";
 import TriggerView from "./components/triggers/TriggerOverview.vue";
 import TabView from "./components/TabView.vue";
 import {defineComponent} from "vue";
-import {EventObject, FileSelected, FileSelectionError} from "@/interfaces/general";
-import {TriggerInformation} from "@/interfaces/triggers";
+import {FileSelected, FileSelectionError, ParserInstalledRequest} from "@/interfaces/general";
+import {Trigger, TriggerInformation} from "@/interfaces/triggers";
 
 export default defineComponent({
     name: "App",
@@ -54,7 +55,7 @@ export default defineComponent({
     data() {
         return {
             selectedTabName: '???',  // Selected tab is handled in TabView
-            scenarioPath: "C:/Users/Kerwin Sneijders/Games/Age of Empires 2 DE/76561198140740017/resources/_common/scenario/test1212.aoe2scenario",
+            selectedScenarioPath: "C:/Users/Kerwin Sneijders/Games/Age of Empires 2 DE/76561198140740017/resources/_common/scenario/test1212.aoe2scenario",
             parserValidated: false,
             loadingStatus: {
                 finished: false,
@@ -62,69 +63,72 @@ export default defineComponent({
                 errorMessage: "",
                 pythonLog: "",
             },
-            triggerInformation: {
-                triggers: [],
-                triggerDisplayOrder: []
-            } as TriggerInformation
+            triggerInformation: {} as TriggerInformation
         }
     },
-    computed: {
-        // triggersAsJson: function (): string {
-        //     return JSON.stringify(this.triggerInformation, null, 2)
-        // }
-    },
+    computed: {},
     methods: {
+        installParser: function (): Promise<void> {
+            return new Promise((resolve) => {
+                window.pyControls.parserInstalled()
+                    .then((response: string) => JSON.parse(response))
+                    .then((jsonResponse: ParserInstalledRequest) => {
+                        if (jsonResponse.code > 0) {
+                            this.parserValidated = true;
+                            resolve()
+                        }
+                    });
+            });
+        },
         startAPI: function () {
-            console.log(this.scenarioPath)
-            window.pyControls.startAPI(this.scenarioPath)
+            window.pyControls.startAPI(this.selectedScenarioPath)
         },
         openFilePrompt: function () {
             window.fileControls.select()
                 .then((value: FileSelected) => {
                     console.log(value.filepath);
-                    this.scenarioPath = value.filepath;
+                    this.selectedScenarioPath = value.filepath;
                 })
                 .catch((error: FileSelectionError) => {
                     console.log(error.reason)
                 })
         },
-        updateTriggers: function (event: EventObject) {
-            this.triggerInformation = JSON.parse(event.target.value)
+        updateTriggers: function (triggers: Array<Trigger>, triggerDO?: Array<number>) {
+            this.triggerInformation.triggers = triggers
+            if (triggerDO) this.triggerInformation.triggerDisplayOrder = triggerDO
         },
         updateSelectedTabName: function (newSelectedTabName: string): void {
             this.selectedTabName = newSelectedTabName;
         },
         retrieveScenario: function () {
-            window.pyControls.parserInstalled().then(response => {
-                if (response.code > 0) this.parserValidated = true;
+            window.axios.getRequest('effect/attributes')
+                .then(response => this.$store.state.effectAttributes = response)
+            window.axios.getRequest('condition/attributes')
+                .then(response => this.$store.state.conditionAttributes = response)
+            window.axios.getRequest('effect/names')
+                .then(response => this.$store.state.effectNames = response)
+            window.axios.getRequest('condition/names')
+                .then(response => this.$store.state.conditionNames = response)
 
-                window.axios.getRequest('effect/attributes')
-                    .then(response => this.$store.state.effectAttributes = response)
-                window.axios.getRequest('condition/attributes')
-                    .then(response => this.$store.state.conditionAttributes = response)
-                window.axios.getRequest('effect/names')
-                    .then(response => this.$store.state.effectNames = response)
-                window.axios.getRequest('condition/names')
-                    .then(response => this.$store.state.conditionNames = response)
-
-                window.axios.retrieveScenario().then(response => {
-                    if (response.success) {
-                        this.triggerInformation = response.data.triggerInformation
-                        this.loadingStatus.finished = true
-                    } else {
-                        this.loadingStatus.finished = false
-                        this.loadingStatus.headerMessage = "Unable to load scenario";
-                        if (response.error) this.loadingStatus.errorMessage = response.error.reason;
-                    }
-                })
+            window.axios.retrieveScenario().then(response => {
+                if (response.success) {
+                    this.triggerInformation = response.data.triggerInformation
+                    this.loadingStatus.finished = true
+                } else {
+                    this.loadingStatus.finished = false
+                    this.loadingStatus.headerMessage = "Unable to load scenario";
+                    if (response.error) this.loadingStatus.errorMessage = response.error.reason;
+                }
             })
         }
     },
-    mounted() {
-        // require('electron').ipcRenderer.on('menu-action-clicked', (event: any, message: any) => {
-        //     console.log(message) // Prints 'whoooooooh!'
-        // })
-        this.retrieveScenario();
+    watch: {
+        parserValidated: function (val) {
+            if (val) {
+                this.startAPI();
+                this.retrieveScenario();
+            }
+        }
     }
 })
 </script>
